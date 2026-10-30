@@ -197,38 +197,248 @@ async function cloudLoad(){
     cloudSay('خطای دریافت اطلاعات: '+(err.message||'دسترسی جدول‌ها را بررسی کن'));
   }
 }
+
 async function initCloud(){
-  if(!window.supabase){cloudSay('کتابخانه اتصال بارگذاری نشد؛ اینترنت را بررسی کن.');return;}
-  cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-  $('cloudSignup').onclick=async()=>{
-    const em=$('cloudEmail').value.trim(), pw=$('cloudPassword').value;
-    if(!em || pw.length<8){cloudSay('ایمیل معتبر و رمز حداقل ۸ کاراکتری وارد کن.');return;}
+  const signup = $('cloudSignup');
+  const login = $('cloudLogin');
+  const logout = $('cloudLogout');
+  const sync = $('cloudSyncNow');
+
+  signup.onclick = async () => {
+    const em = $('cloudEmail').value.trim();
+    const pw = $('cloudPassword').value;
+
+    if(!em || pw.length < 8){
+      cloudSay('ایمیل معتبر و رمز حداقل ۸ کاراکتری وارد کن.');
+      return;
+    }
+
+    if(!cloudClient){
+      cloudSay('اتصال به سرویس برقرار نیست؛ اینترنت را بررسی کن.');
+      return;
+    }
+
+    signup.disabled = true;
     cloudSay('در حال ساخت حساب…');
-    const {error}=await cloudClient.auth.signUp({email:em,password:pw});
-    cloudSay(error?'خطا: '+error.message:'ثبت‌نام انجام شد؛ اگر ایمیل تأیید آمد، آن را تأیید کن و بعد وارد شو.');
+
+    try{
+      const {data,error} = await cloudClient.auth.signUp({
+        email: em,
+        password: pw
+      });
+
+      if(error) throw error;
+
+      cloudSay(
+        data.user?.identities?.length === 0
+        ? 'این ایمیل قبلاً ثبت شده است.'
+        : 'ثبت‌نام انجام شد؛ ایمیلت را برای تأیید بررسی کن.'
+      );
+    }catch(err){
+      cloudSay('خطای ثبت‌نام: '+err.message);
+    }finally{
+      signup.disabled = false;
+    }
   };
-  $('cloudLogin').onclick=async()=>{
-    const em=$('cloudEmail').value.trim(), pw=$('cloudPassword').value;
-    if(!em || !pw){cloudSay('ایمیل و رمز عبور را وارد کن.');return;}
+
+  login.onclick = async () => {
+    const em = $('cloudEmail').value.trim();
+    const pw = $('cloudPassword').value;
+
+    if(!em || !pw){
+      cloudSay('ایمیل و رمز عبور را وارد کن.');
+      return;
+    }
+
+    if(!cloudClient){
+      cloudSay('اتصال به سرویس برقرار نیست؛ اینترنت را بررسی کن.');
+      return;
+    }
+
+    login.disabled = true;
     cloudSay('در حال ورود…');
-    const {data,error}=await cloudClient.auth.signInWithPassword({email:em,password:pw});
-    if(error){cloudSay('خطای ورود: '+error.message);return;}
-    showCloudUser(data.user); await cloudLoad();
+
+    try{
+      const {data,error} = await cloudClient.auth.signInWithPassword({
+        email:em,
+        password:pw
+      });
+
+      if(error) throw error;
+
+      showCloudUser(data.user);
+      await cloudLoad();
+    }catch(err){
+      cloudSay('خطای ورود: '+err.message);
+    }finally{
+      login.disabled = false;
+    }
   };
-  $('cloudLogout').onclick=async()=>{
-    const {error}=await cloudClient.auth.signOut();
-    if(error){cloudSay('خطا در خروج: '+error.message);return;}
-    showCloudUser(null);cloudSay('خارج شدی؛ اطلاعات محلی حفظ شده است.');
+
+  logout.onclick = async () => {
+    if(!cloudClient) return;
+    const {error} = await cloudClient.auth.signOut();
+    if(error){
+      cloudSay('خطا در خروج: '+error.message);
+      return;
+    }
+    showCloudUser(null);
+    cloudSay('خارج شدی؛ اطلاعات دستگاه حفظ شده است.');
   };
-  $('cloudSyncNow').onclick=cloudPush;
-  const {data,error}=await cloudClient.auth.getSession();
-  if(error){cloudSay('خطای حساب: '+error.message);return;}
-  if(data.session?.user){showCloudUser(data.session.user);await cloudLoad();}
-  else {showCloudUser(null);cloudSay('برای همگام‌سازی، وارد حساب شو.');}
-  cloudClient.auth.onAuthStateChange((event,session)=>{
-    if(event==='SIGNED_OUT') showCloudUser(null);
-  });
+
+  sync.onclick = cloudPush;
+
+  if(!window.supabase){
+    cloudClient = null;
+    cloudSay('کتابخانه اتصال بارگذاری نشد؛ اینترنت یا دسترسی به سرویس را بررسی کن.');
+    return;
+  }
+
+  try{
+    cloudClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const {data,error} = await cloudClient.auth.getSession();
+    if(error) throw error;
+
+    if(data.session?.user){
+      showCloudUser(data.session.user);
+      await cloudLoad();
+    }else{
+      showCloudUser(null);
+      cloudSay('برای همگام‌سازی، وارد حساب شو.');
+    }
+
+    cloudClient.auth.onAuthStateChange((event,session)=>{
+      if(event === 'SIGNED_OUT') showCloudUser(null);
+    });
+  }catch(err){
+    cloudSay('خطای اتصال: '+err.message);
+  }
 }
+
+async function initCloud(){
+  const signup = $('cloudSignup');
+  const login = $('cloudLogin');
+  const logout = $('cloudLogout');
+  const sync = $('cloudSyncNow');
+
+  signup.onclick = async () => {
+    const em = $('cloudEmail').value.trim();
+    const pw = $('cloudPassword').value;
+
+    if(!em || pw.length < 8){
+      cloudSay('ایمیل معتبر و رمز حداقل ۸ کاراکتری وارد کن.');
+      return;
+    }
+
+    if(!cloudClient){
+      cloudSay('اتصال به سرویس برقرار نیست؛ اینترنت را بررسی کن.');
+      return;
+    }
+
+    signup.disabled = true;
+    cloudSay('در حال ساخت حساب…');
+
+    try{
+      const {data,error} = await cloudClient.auth.signUp({
+        email: em,
+        password: pw
+      });
+
+      if(error) throw error;
+
+      cloudSay(
+        data.user?.identities?.length === 0
+        ? 'این ایمیل قبلاً ثبت شده است.'
+        : 'ثبت‌نام انجام شد؛ ایمیلت را برای تأیید بررسی کن.'
+      );
+    }catch(err){
+      cloudSay('خطای ثبت‌نام: '+err.message);
+    }finally{
+      signup.disabled = false;
+    }
+  };
+
+  login.onclick = async () => {
+    const em = $('cloudEmail').value.trim();
+    const pw = $('cloudPassword').value;
+
+    if(!em || !pw){
+      cloudSay('ایمیل و رمز عبور را وارد کن.');
+      return;
+    }
+
+    if(!cloudClient){
+      cloudSay('اتصال به سرویس برقرار نیست؛ اینترنت را بررسی کن.');
+      return;
+    }
+
+    login.disabled = true;
+    cloudSay('در حال ورود…');
+
+    try{
+      const {data,error} = await cloudClient.auth.signInWithPassword({
+        email:em,
+        password:pw
+      });
+
+      if(error) throw error;
+
+      showCloudUser(data.user);
+      await cloudLoad();
+    }catch(err){
+      cloudSay('خطای ورود: '+err.message);
+    }finally{
+      login.disabled = false;
+    }
+  };
+
+  logout.onclick = async () => {
+    if(!cloudClient) return;
+    const {error} = await cloudClient.auth.signOut();
+    if(error){
+      cloudSay('خطا در خروج: '+error.message);
+      return;
+    }
+    showCloudUser(null);
+    cloudSay('خارج شدی؛ اطلاعات دستگاه حفظ شده است.');
+  };
+
+  sync.onclick = cloudPush;
+
+  if(!window.supabase){
+    cloudClient = null;
+    cloudSay('کتابخانه اتصال بارگذاری نشد؛ اینترنت یا دسترسی به سرویس را بررسی کن.');
+    return;
+  }
+
+  try{
+    cloudClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const {data,error} = await cloudClient.auth.getSession();
+    if(error) throw error;
+
+    if(data.session?.user){
+      showCloudUser(data.session.user);
+      await cloudLoad();
+    }else{
+      showCloudUser(null);
+      cloudSay('برای همگام‌سازی، وارد حساب شو.');
+    }
+
+    cloudClient.auth.onAuthStateChange((event,session)=>{
+      if(event === 'SIGNED_OUT') showCloudUser(null);
+    });
+  }catch(err){
+    cloudSay('خطای اتصال: '+err.message);
+  }
+
 // Extend the existing local save function without removing local backup.
 const originalLocalSave=save;
 save=function(){
