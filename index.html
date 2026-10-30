@@ -28,8 +28,24 @@
 <nav class="nav"><button class="active" data-scroll="home"><span class="ico">⌂</span>خانه</button><button data-scroll="calendarPanel"><span class="ico">▦</span>تقویم</button><button data-scroll="notePanel"><span class="ico">♧</span>یادداشت‌ها</button><button data-scroll="taskPanel"><span class="ico">☑</span>کارها</button><button id="archiveBtn"><span class="ico">▣</span>آرشیو روزها</button><button id="backupBtn"><span class="ico">⇩</span>پشتیبان‌گیری</button></nav>
 <div class="side-note">هر روز، فرصتی تازه برای<br>بهتر شدن است...<div class="heart">♥</div></div></aside>
 <main class="main" id="home">
+
+<section class="panel" id="cloudAuthPanel" style="margin:0 0 15px">
+  <div class="panel-head"><h3>☁️ حساب روزنگار</h3><small id="cloudStatus">برای همگام‌سازی وارد شو</small></div>
+  <div id="cloudAuthForm" style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="cloudEmail" type="email" placeholder="ایمیل" autocomplete="email" style="flex:1;min-width:170px;border:1px solid #edf0f8;border-radius:10px;padding:10px;font:11px Vazirmatn,Tahoma">
+    <input id="cloudPassword" type="password" placeholder="رمز عبور (حداقل ۸ کاراکتر)" autocomplete="current-password" style="flex:1;min-width:170px;border:1px solid #edf0f8;border-radius:10px;padding:10px;font:11px Vazirmatn,Tahoma">
+    <button id="cloudLogin" class="save">ورود</button><button id="cloudSignup" class="save" style="background:#efedff;color:#6458dc">ساخت حساب</button>
+  </div>
+  <div id="cloudSignedIn" hidden style="font-size:11px">
+    <span id="cloudUserEmail"></span>
+    <button id="cloudLogout" class="save" style="margin-right:10px">خروج</button>
+    <button id="cloudSyncNow" class="save" style="background:#efedff;color:#6458dc">همگام‌سازی اکنون</button>
+  </div>
+  <p style="font-size:10px;color:#929bb8;margin:9px 0 0">اطلاعات این دستگاه حفظ می‌شود؛ برای همگام‌سازی، با همان حساب در دستگاه دیگر وارد شو.</p>
+</section>
+
 <header class="topbar"><label class="search">⌕ <input id="search" placeholder="جست‌وجوی یادداشت‌ها..."></label><div class="top-left"><button class="round-btn" id="backupTop" title="پشتیبان">⇩</button><div class="avatar">ر</div></div></header>
-<section class="greeting"><div class="greet-copy"><h2 id="hello">سلام! 🌿</h2><p>امروز چه خاطره‌ای می‌خواهی ثبت کنی؟</p><div class="date-card"><span class="date-icon">▦</span><span id="todayDate">امروز</span></div></div><div class="visual-card"><img src="assets/journal-vignette.png" alt="دفتر و فنجان قهوه"></div></section>
+<section class="greeting"><div class="greet-copy"><h2 id="hello">سلام! 🌿</h2><p>امروز چه خاطره‌ای می‌خواهی ثبت کنی؟</p><div class="date-card"><span class="date-icon">▦</span><span id="todayDate">امروز</span></div></div><div class="visual-card"><img src="assets/journal-vignette.svg" alt="دفتر و فنجان قهوه"></div></section>
 <section class="quick-links"><button class="quick qblue" id="newNote"><span class="qicon">✧</span><span><b>یادداشت جدید</b><small>ثبت فکرها و احساسات</small></span></button><button class="quick qmint" id="focusTasks"><span class="qicon">☑</span><span><b>لیست کارها</b><small>برنامه‌ریزی امروز</small></span></button><button class="quick qpink" id="moodBtn"><span class="qicon">♡</span><span><b>حال خوب</b><small>ثبت حس و حال روز</small></span></button><button class="quick qlav" id="archiveQuick"><span class="qicon">▣</span><span><b>آرشیو</b><small>یادداشت‌های گذشته</small></span></button></section>
 <section class="dashboard">
 <div class="panel calendar-panel" id="calendarPanel"><div class="panel-head"><h3>تقویم روزهای من</h3><div class="monthbar"><button id="prev">‹</button><select id="month"></select><select id="year"></select><button id="next">›</button></div></div><div class="calendar" id="calendar"></div><div class="bottomline" id="chosenDate">یک روز را انتخاب کن</div></div>
@@ -41,6 +57,7 @@
 </main></div>
 <nav class="mobile-nav"><button class="active" data-scroll="home"><span>⌂</span>خانه</button><button data-scroll="calendarPanel"><span>▦</span>تقویم</button><button data-scroll="taskPanel"><span>☑</span>کارها</button><button data-scroll="notePanel"><span>♧</span>یادداشت</button></nav>
 <div class="toast" id="toast"></div><input type="file" id="importFile" accept="application/json" hidden>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=id=>document.getElementById(id),months=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],wd=['ش','ی','د','س','چ','پ','ج'];
 const fa=n=>new Intl.NumberFormat('fa-IR').format(n);
@@ -57,6 +74,23 @@ function dateLabel(y,m,d){return `${fa(d)} ${months[m-1]} ${fa(y)}`}
 function renderCalendar(){$('month').innerHTML=months.map((m,i)=>`<option value="${i+1}" ${vm===i+1?'selected':''}>${m}</option>`).join('');$('year').innerHTML=Array.from({length:9},(_,i)=>vy-4+i).map(y=>`<option value="${y}" ${vy===y?'selected':''}>${fa(y)}</option>`).join('');let g=j2g(vy,vm,1),offset=(new Date(g.gy,g.gm-1,g.gd).getDay()+1)%7,html=wd.map(x=>`<div class="weekday">${x}</div>`).join('');for(let i=0;i<offset;i++)html+='<div class="calday empty"></div>';for(let d=1;d<=dim(vy,vm);d++){let k=key(vy,vm,d),p=db[k],has=p&&(p.note||p.tasks?.length);html+=`<button class="calday ${selected===k?'selected':''} ${k===key(today.y,today.m,today.d)?'today':''} ${has?'hasdata':''}" data-d="${d}">${fa(d)}</button>`}$('calendar').innerHTML=html;$('calendar').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>select(vy,vm,+b.dataset.d))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function renderDay(){let [y,m,d]=parts(selected),p=page();$('chosenDate').textContent=dateLabel(y,m,d)+' · صفحه‌ی شخصی تو';$('todayDate').textContent=dateLabel(y,m,d);$('noteText').value=p.note||'';$('entries').innerHTML=p.note?`<div class="entry"><div class="entry-art">✎</div><div class="entry-info"><b>${esc(p.note.slice(0,45))}</b><small>یادداشت روز · ${dateLabel(y,m,d)}</small></div></div>`:'<div class="empty">هنوز یادداشتی برای این روز نداری ✨</div>';$('noteCount').textContent=fa(p.note?1:0)+' یادداشت';$('tasks').innerHTML=p.tasks.length?p.tasks.map(t=>`<label class="task ${t.done?'done':''}"><input type="checkbox" data-id="${t.id}" ${t.done?'checked':''}><span>${esc(t.text)}</span><button type="button" data-del="${t.id}">×</button></label>`).join(''):'<div class="empty">کارهای این روز را اینجا اضافه کن 🌱</div>';let done=p.tasks.filter(t=>t.done).length;$('taskSummary').textContent=`${fa(done)} از ${fa(p.tasks.length)} انجام‌شده`;$('progressFill').style.width=(p.tasks.length?done/p.tasks.length*100:0)+'%';$('tasks').querySelectorAll('[data-id]').forEach(c=>c.onchange=()=>{let t=p.tasks.find(x=>x.id===c.dataset.id);t.done=c.checked;save();renderDay();renderCalendar()});$('tasks').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{p.tasks=p.tasks.filter(t=>t.id!==b.dataset.del);save();renderDay();renderCalendar()})}
+
+function renderDailyInspiration(){
+  const images=['daily-1.svg','daily-2.svg','daily-3.svg','daily-4.svg','daily-5.svg'];
+  const quotes=[
+    'هر روز، فرصتی تازه برای شکوفا شدن است.',
+    'قدم‌های کوچک، مسیرهای بزرگ می‌سازند.',
+    'به خودت فرصت رشد بده.',
+    'آرامش را در لحظه‌های ساده پیدا کن.',
+    'امروز می‌تواند شروعی تازه باشد.'
+  ];
+  const seed=selected.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const i=seed%images.length;
+  const image=$('dailyImage'), quote=$('dailyQuote');
+  if(image) image.src='assets/'+images[i];
+  if(quote) quote.textContent=quotes[i];
+}
+
 function select(y,m,d){selected=key(y,m,d);vy=y;vm=m;renderCalendar();renderDay();renderDailyInspiration()}
 $('month').onchange=()=>{vm=+$('month').value;renderCalendar()};$('year').onchange=()=>{vy=+$('year').value;renderCalendar()};$('prev').onclick=()=>{if(--vm<1){vm=12;vy--}renderCalendar()};$('next').onclick=()=>{if(++vm>12){vm=1;vy++}renderCalendar()};
 $('taskForm').onsubmit=e=>{e.preventDefault();let v=$('taskInput').value.trim();if(!v)return;page().tasks.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),text:v,done:false});$('taskInput').value='';save();renderDay();renderCalendar();toast('به کارهای همین روز اضافه شد')};
@@ -69,4 +103,138 @@ $('search').onkeydown=e=>{if(e.key==='Enter'){let q=e.target.value.trim();let fo
 document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>{document.getElementById(b.dataset.scroll).scrollIntoView({behavior:'smooth'});document.querySelectorAll('[data-scroll]').forEach(x=>x.classList.toggle('active',x===b))});
 renderCalendar();renderDay();renderDailyInspiration();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+
+// ---- Supabase cloud sync (local storage remains as an offline backup) ----
+const SUPABASE_URL='https://dsrkqbqlzitkhbhrlaop.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_xtLXSnHCZ2EYukwdqQ4cCQ_nVOY2NXD';
+let cloudClient=null, cloudUser=null, cloudBusy=false, cloudTimer=null;
+
+function cloudSay(message){
+  const el=$('cloudStatus'); if(el) el.textContent=message;
+}
+function jalaliKeyFromGregorian(iso){
+  const date=new Date(iso+'T12:00:00');
+  const parts=new Intl.DateTimeFormat('en-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(date);
+  const p={}; parts.forEach(x=>p[x.type]=Number(x.value));
+  return key(p.year,p.month,p.day);
+}
+function gregorianDateFromJalali(k){
+  const [jy,jm,jd]=parts(k), g=j2g(jy,jm,jd);
+  return `${g.gy}-${String(g.gm).padStart(2,'0')}-${String(g.gd).padStart(2,'0')}`;
+}
+function showCloudUser(user){
+  cloudUser=user||null;
+  $('cloudAuthForm').hidden=!!user;
+  $('cloudSignedIn').hidden=!user;
+  $('cloudUserEmail').textContent=user ? 'واردشده با: '+user.email : '';
+}
+async function cloudPush(){
+  if(!cloudClient || !cloudUser || cloudBusy) return;
+  cloudBusy=true; cloudSay('در حال ارسال اطلاعات…');
+  try{
+    for(const [jalaliDate,entry] of Object.entries(db)){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(jalaliDate)) continue;
+      const gregDate=gregorianDateFromJalali(jalaliDate);
+      const noteResult=await cloudClient.from('day_entries').upsert({
+        user_id:cloudUser.id, entry_date:gregDate, note:entry.note||''
+      },{onConflict:'user_id,entry_date'});
+      if(noteResult.error) throw noteResult.error;
+
+      const del=await cloudClient.from('day_tasks').delete()
+        .eq('user_id',cloudUser.id).eq('entry_date',gregDate);
+      if(del.error) throw del.error;
+      if(entry.tasks && entry.tasks.length){
+        const rows=entry.tasks.map(t=>({
+          user_id:cloudUser.id, entry_date:gregDate,
+          title:t.text, completed:!!t.done
+        }));
+        const ins=await cloudClient.from('day_tasks').insert(rows);
+        if(ins.error) throw ins.error;
+      }
+    }
+    cloudSay('همگام‌سازی انجام شد ✓');
+  }catch(err){
+    console.error('Cloud sync error:',err);
+    cloudSay('خطای همگام‌سازی: '+(err.message||'اتصال را بررسی کن'));
+  }finally{cloudBusy=false;}
+}
+function scheduleCloudPush(){
+  if(!cloudUser) return;
+  clearTimeout(cloudTimer);
+  cloudTimer=setTimeout(()=>cloudPush(),900);
+}
+async function cloudLoad(){
+  if(!cloudUser) return;
+  cloudSay('در حال دریافت اطلاعات ابری…');
+  try{
+    const [nr,tr]=await Promise.all([
+      cloudClient.from('day_entries').select('entry_date,note'),
+      cloudClient.from('day_tasks').select('id,entry_date,title,completed')
+    ]);
+    if(nr.error) throw nr.error;
+    if(tr.error) throw tr.error;
+    for(const row of nr.data||[]){
+      const k=jalaliKeyFromGregorian(row.entry_date);
+      if(!db[k]) db[k]={note:'',tasks:[],mood:''};
+      // Local content wins if it already exists; remote fills missing local entries.
+      if(!db[k].note) db[k].note=row.note||'';
+    }
+    for(const row of tr.data||[]){
+      const k=jalaliKeyFromGregorian(row.entry_date);
+      if(!db[k]) db[k]={note:'',tasks:[],mood:''};
+      const match=db[k].tasks.find(t=>t.text===row.title);
+      if(!match) db[k].tasks.push({
+        id:row.id||String(Date.now())+Math.random(),
+        text:row.title, done:!!row.completed
+      });
+    }
+    save();
+    renderCalendar(); renderDay(); renderDailyInspiration();
+    cloudSay('اطلاعات دریافت شد؛ در حال یکسان‌سازی…');
+    await cloudPush();
+  }catch(err){
+    console.error('Cloud load error:',err);
+    cloudSay('خطای دریافت اطلاعات: '+(err.message||'دسترسی جدول‌ها را بررسی کن'));
+  }
+}
+async function initCloud(){
+  if(!window.supabase){cloudSay('کتابخانه اتصال بارگذاری نشد؛ اینترنت را بررسی کن.');return;}
+  cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  $('cloudSignup').onclick=async()=>{
+    const em=$('cloudEmail').value.trim(), pw=$('cloudPassword').value;
+    if(!em || pw.length<8){cloudSay('ایمیل معتبر و رمز حداقل ۸ کاراکتری وارد کن.');return;}
+    cloudSay('در حال ساخت حساب…');
+    const {error}=await cloudClient.auth.signUp({email:em,password:pw});
+    cloudSay(error?'خطا: '+error.message:'ثبت‌نام انجام شد؛ اگر ایمیل تأیید آمد، آن را تأیید کن و بعد وارد شو.');
+  };
+  $('cloudLogin').onclick=async()=>{
+    const em=$('cloudEmail').value.trim(), pw=$('cloudPassword').value;
+    if(!em || !pw){cloudSay('ایمیل و رمز عبور را وارد کن.');return;}
+    cloudSay('در حال ورود…');
+    const {data,error}=await cloudClient.auth.signInWithPassword({email:em,password:pw});
+    if(error){cloudSay('خطای ورود: '+error.message);return;}
+    showCloudUser(data.user); await cloudLoad();
+  };
+  $('cloudLogout').onclick=async()=>{
+    const {error}=await cloudClient.auth.signOut();
+    if(error){cloudSay('خطا در خروج: '+error.message);return;}
+    showCloudUser(null);cloudSay('خارج شدی؛ اطلاعات محلی حفظ شده است.');
+  };
+  $('cloudSyncNow').onclick=cloudPush;
+  const {data,error}=await cloudClient.auth.getSession();
+  if(error){cloudSay('خطای حساب: '+error.message);return;}
+  if(data.session?.user){showCloudUser(data.session.user);await cloudLoad();}
+  else {showCloudUser(null);cloudSay('برای همگام‌سازی، وارد حساب شو.');}
+  cloudClient.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_OUT') showCloudUser(null);
+  });
+}
+// Extend the existing local save function without removing local backup.
+const originalLocalSave=save;
+save=function(){
+  originalLocalSave();
+  scheduleCloudPush();
+};
+initCloud();
+
 </script></body></html>
