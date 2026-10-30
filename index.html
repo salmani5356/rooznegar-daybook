@@ -1,463 +1,72 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#764ba2">
-<title>روزنگار | DayBook</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f7ff"><meta name="description" content="روزنگار؛ دفتر لطیف و شخصی برای روزها، یادداشت‌ها و کارها">
+<link rel="manifest" href="manifest.webmanifest"><title>روزنگار | دفتر روزهای تو</title>
 <style>
-/* فونت‌ها: فایل‌های Vazirmatn و Poppins را کنار این HTML قرار دهید. */
-@font-face{font-family:Vazirmatn;src:url("Vazirmatn-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:Vazirmatn;src:url("Vazirmatn-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
-@font-face{font-family:Poppins;src:url("Poppins-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
-@font-face{font-family:Poppins;src:url("Poppins-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
-:root{--purple:#764ba2;--blue:#667eea;--ink:#302b3a;--muted:#827b8d;--cream:#fbf8f1;--white:#fff;--line:#eee8f4;--soft:#f2edfa;--shadow:0 12px 34px #39235a12}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(135deg,#f8f4fc 0%,#fdfbf5 100%);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;min-height:100vh}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #667eea55;outline-offset:2px}
-.app{width:min(1120px,100% - 32px);margin:28px auto 44px}
-header{position:relative;overflow:hidden;border-radius:26px;padding:28px 30px;color:#fff;background:linear-gradient(120deg,var(--purple),var(--blue));box-shadow:0 18px 38px #764ba229}
-header:after{content:"";position:absolute;width:240px;height:240px;border:1px solid #ffffff25;border-radius:50%;left:-70px;top:-115px;box-shadow:0 0 0 28px #ffffff09,0 0 0 58px #ffffff08}
-.head-top{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
-.brand{display:flex;align-items:center;gap:13px}.logo{width:52px;height:52px;border-radius:17px;background:#ffffff20;display:grid;place-items:center;font-size:27px;border:1px solid #ffffff40}
-h1{font-size:30px;margin:0;line-height:1.3}.english{font:700 13px Poppins,sans-serif;letter-spacing:2px;opacity:.85;direction:ltr;text-align:right}
-.date-pill{background:#ffffff1c;border:1px solid #ffffff45;border-radius:15px;padding:11px 15px;font-size:14px;white-space:nowrap}
-.header-bottom{position:relative;z-index:1;margin-top:24px;display:flex;justify-content:space-between;align-items:end;gap:20px}
-.header-bottom p{margin:0;opacity:.9}.welcome{font-size:20px;font-weight:700;margin-bottom:5px!important}
-.day-count{font-size:13px;background:#ffffff1a;border-radius:12px;padding:9px 13px;white-space:nowrap}
-.tabs{display:flex;gap:8px;margin:20px 0 18px;padding:7px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:auto}
-.tab{border:0;background:transparent;color:var(--muted);padding:12px 18px;border-radius:12px;white-space:nowrap;flex:1;transition:.2s}
-.tab.active{color:#fff;background:linear-gradient(120deg,var(--purple),var(--blue));box-shadow:0 6px 14px #764ba225}
-.panel{display:none}.panel.active{display:block;animation:appear .25s ease}
-@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(270px,.85fr);gap:18px}
-.card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);min-width:0}
-.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
-.card h2{font-size:18px;margin:0}.subtle{font-size:13px;color:var(--muted);margin:5px 0 0}
-.field{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}.field label{font-size:13px;color:#625a70;font-weight:700}
-input,textarea,select{width:100%;border:1px solid #e7e0ed;background:#fdfcff;color:var(--ink);border-radius:12px;padding:12px 13px;min-width:0}
-textarea{resize:vertical;min-height:125px;line-height:1.9}
-input[type="date"],input[type="time"]{direction:ltr;text-align:right}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;transition:transform .15s,opacity .15s}
-.btn:active{transform:scale(.98)}.primary{background:linear-gradient(120deg,var(--purple),var(--blue));color:white}.secondary{background:var(--soft);color:var(--purple)}.ghost{background:#f7f5f9;color:#6e657b}.danger{background:#fff0f1;color:#bb4855}
-.full{width:100%}
-.task-list{display:flex;flex-direction:column;gap:10px}
-.task{display:flex;align-items:flex-start;gap:12px;padding:13px;border:1px solid #eee8f3;border-radius:15px;background:#fff;transition:.2s}
-.task.done{background:#faf8fc}.task-check{appearance:none;width:21px;height:21px;flex:0 0 21px;border:2px solid #c9bddb;border-radius:7px;padding:0;margin:3px 0 0;cursor:pointer}
-.task-check:checked{background:var(--purple);border-color:var(--purple);position:relative}.task-check:checked:after{content:"✓";color:#fff;position:absolute;inset:-3px 0 0;text-align:center;font-size:16px}
-.task-main{flex:1;min-width:0}.task-title{font-weight:700;overflow-wrap:anywhere}.task.done .task-title{text-decoration:line-through;color:#a49bab}
-.task-meta{font-size:12px;color:var(--muted);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
-.icon-btn{border:0;background:transparent;color:#a69bad;font-size:18px;padding:3px 6px;border-radius:8px}.icon-btn:hover{background:#fff0f1;color:#bb4855}
-.empty{text-align:center;padding:28px 12px;color:var(--muted);font-size:14px}.empty .emoji{font-size:30px;display:block;margin-bottom:8px}
-.progress-wrap{height:7px;background:#f0eaf6;border-radius:99px;overflow:hidden;margin:14px 0 7px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:99px;transition:width .25s}
-.progress-label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
-.note-compose{display:flex;flex-direction:column;gap:12px}.notes-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
-.note{border:1px solid #eee6d7;background:#fffdf8;border-radius:16px;padding:15px;min-width:0}.note p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;margin:8px 0 13px}.note time{font-size:11px;color:var(--muted)}
-.note-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.note-top strong{font-size:13px}
-.quote-card{background:linear-gradient(145deg,#764ba2,#667eea);color:white;border-radius:24px;padding:30px;min-height:300px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;box-shadow:0 16px 30px #764ba225}
-.quote-card:before{content:"“";font:700 120px Georgia,serif;position:absolute;top:-20px;right:15px;color:#ffffff18}
-.quote-label{font-size:12px;letter-spacing:1px;opacity:.8}.quote-text{font-size:24px;font-weight:700;line-height:2;margin:20px 0;position:relative}.quote-number{font:12px Poppins,sans-serif;opacity:.75;direction:ltr}
-.quote-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.quote-actions .btn{background:#fff;color:var(--purple)}
-.quote-hint{color:var(--muted);font-size:13px;line-height:1.9;margin-top:14px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border-bottom:0}.setting-row strong{display:block}.setting-row small{display:block;color:var(--muted);margin-top:4px;line-height:1.7}
-.music-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.file-label{display:inline-flex;align-items:center;justify-content:center;gap:7px}
-.status{font-size:12px;color:var(--muted);margin-top:9px}
-footer{text-align:center;color:#a39aaa;font-size:12px;padding:22px 0 0}
-.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#302b3a;color:#fff;padding:11px 18px;border-radius:12px;box-shadow:var(--shadow);transition:.25s;z-index:10;font-size:13px}.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:760px){.app{width:min(100% - 22px,600px);margin:12px auto 28px}header{padding:21px 18px;border-radius:22px}.head-top{align-items:flex-start}.logo{width:45px;height:45px}h1{font-size:25px}.date-pill{font-size:12px;padding:9px 10px;white-space:normal;text-align:center;max-width:145px}.header-bottom{align-items:flex-start;flex-direction:column;gap:12px}.welcome{font-size:18px}.layout{grid-template-columns:1fr}.tabs{margin:14px 0;gap:4px}.tab{padding:11px 12px;font-size:13px}.card{padding:17px;border-radius:19px}.notes-list{grid-template-columns:1fr}.quote-text{font-size:21px}.form-row{gap:9px}}
-@media(max-width:380px){.date-pill{max-width:118px}.tab{padding:10px 9px}.form-row{grid-template-columns:1fr}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-</style>
-
-<link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#764ba2">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-\n</head>
-<body>
-<div class="app">
-<header>
-  <div class="head-top">
-    <div class="brand"><div class="logo" aria-hidden="true">✦</div><div><h1>روزنگار</h1><div class="english">DayBook</div></div></div>
-    <div class="date-pill" id="todayDate">در حال نمایش تاریخ امروز…</div>
-  </div>
-  <div class="header-bottom">
-    <div><p class="welcome">امروز، فرصتی تازه است 🌿</p><p>با قدم‌های کوچک، روز دلخواهت را بساز.</p></div>
-    <div class="day-count" id="dayCount">۰ کار انجام‌شده</div>
-  </div>
-</header>
-
-<nav class="tabs" aria-label="بخش‌های روزنگار">
-  <button class="tab active" data-tab="tasks" aria-selected="true">✓ کارها</button>
-  <button class="tab" data-tab="notes" aria-selected="false">✎ یادداشت</button>
-  <button class="tab" data-tab="quote" aria-selected="false">✧ جمله روز</button>
-  <button class="tab" data-tab="settings" aria-selected="false">⚙ تنظیمات</button>
-</nav>
-
-<main>
-<section class="panel active" id="panel-tasks">
-  <div class="layout">
-    <div class="card">
-      <div class="card-head"><div><h2>کارهای روزانه</h2><p class="subtle">کارهایت را بنویس و یکی‌یکی پیش برو.</p></div><span aria-hidden="true">📝</span></div>
-      <form id="taskForm">
-        <div class="field"><label for="taskTitle">عنوان کار</label><input id="taskTitle" maxlength="140" required placeholder="مثلاً: پیاده‌روی عصرگاهی"></div>
-        <div class="form-row">
-          <div class="field"><label for="taskTime">ساعت</label><input id="taskTime" type="time"></div>
-          <div class="field"><label for="taskDate">تاریخ</label><input id="taskDate" type="date" required></div>
-        </div>
-        <button class="btn primary full" type="submit">＋ افزودن کار</button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="card-head"><div><h2>فهرست کارها</h2><p class="subtle" id="listSubtitle">کارهای ثبت‌شده‌ات اینجا هستند.</p></div><span aria-hidden="true">☀️</span></div>
-      <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
-      <div class="progress-label"><span>پیشرفت امروز</span><span id="progressText">۰٪</span></div>
-      <div class="task-list" id="taskList" style="margin-top:15px"></div>
-    </div>
-  </div>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+:root{--ink:#25366f;--muted:#8792b4;--purple:#7164ed;--purple2:#9589ff;--line:#edf0fa;--bg:#f7f8fd;--white:#fff;--blue:#eaf5ff;--mint:#eaf8f4;--pink:#fff0f2;--lav:#f1efff;--shadow:0 10px 30px rgba(70,83,150,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+.app{min-height:100vh;max-width:1600px;margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr)}
+.sidebar{background:linear-gradient(180deg,#fff 0%,#fbfbff 70%,#f2f4ff 100%);border-left:1px solid #edf0fb;padding:24px 18px;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:12px;padding:0 5px 28px}.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#8377ff,#5146c7);display:grid;place-items:center;box-shadow:0 8px 18px #7669e54a}.logo svg{width:32px}.brand h1{font-size:20px;margin:0;font-weight:800;color:#243b82}.brand small{display:block;color:#8893b7;font-size:10px;margin-top:2px}
+.nav{display:grid;gap:7px}.nav button{display:flex;align-items:center;gap:12px;text-align:right;padding:12px 13px;border-radius:13px;color:#33467f;background:transparent;font-size:13px;transition:.2s}.nav button:hover,.nav button.active{background:#efedff;color:#6458dc}.nav .ico{width:22px;height:22px;display:grid;place-items:center;font-size:17px}
+.side-note{margin-top:auto;text-align:center;color:#8c96b7;font-size:11px;line-height:2;padding:18px 8px}.side-note .heart{color:#8e81f6;font-size:18px}
+.main{padding:25px 30px 42px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}.top-left{display:flex;align-items:center;gap:10px}.search{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:10px 15px;width:min(350px,35vw);box-shadow:0 3px 12px #5668a00a}.search input{border:0;outline:0;width:100%;font-size:11px;color:var(--ink)}.round-btn,.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#7884b4;border:1px solid var(--line)}.avatar{background:linear-gradient(135deg,#d8e8ff,#e8e2ff);color:#4d5db4;font-weight:800}
+.greeting{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center;margin-bottom:18px}.greet-copy{padding:8px 5px}.greet-copy h2{font-size:27px;margin:0 0 6px;color:#233a80}.greet-copy p{font-size:12px;color:#8a94b5;margin:0}.date-card{display:inline-flex;align-items:center;gap:12px;background:#f0efff;border-radius:18px;padding:12px 18px;margin-top:18px;color:#514bc0;font-size:12px}.date-card b{font-size:13px}.date-icon{font-size:23px}.visual-card{height:145px;border-radius:23px;overflow:hidden;background:#eaf2ff;position:relative;box-shadow:var(--shadow)}.visual-card img{width:100%;height:100%;object-fit:cover;object-position:center 48%}.visual-card:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#ffffff00,#ffffff12)}
+.quick-links{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}.quick{border-radius:18px;padding:16px 15px;display:flex;align-items:center;gap:12px;min-height:80px;text-align:right;transition:.2s}.quick:hover{transform:translateY(-2px)}.quick .qicon{width:39px;height:39px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:#ffffffa8}.quick b{font-size:12px;display:block}.quick small{font-size:10px;color:#8290b5}.qblue{background:#edf7ff}.qmint{background:#edf9f5}.qpink{background:#fff0f2}.qlav{background:#f1efff}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(250px,.85fr) minmax(260px,.9fr);gap:15px;align-items:stretch}.panel{background:#fff;border:1px solid #edf0fa;border-radius:20px;padding:17px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}.panel-head h3{margin:0;font-size:13px;color:#273b7c}.panel-head small{font-size:10px;color:#99a2bf}.monthbar{display:flex;align-items:center;gap:5px}.monthbar select{border:0;background:#f6f6ff;color:#4254a0;border-radius:9px;padding:6px 7px;font-size:10px;max-width:95px}.monthbar button{background:transparent;color:#7884ba;font-size:18px;padding:2px 6px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.weekday{text-align:center;color:#9aa3bf;font-size:9px;padding:4px 0}.calday{background:transparent;color:#34477f;border-radius:10px;min-height:32px;font-size:10px;position:relative}.calday:hover{background:#f2f1ff}.calday.selected{background:#7568ee;color:white;box-shadow:0 4px 10px #7568ee45}.calday.today:not(.selected){outline:1px solid #9c91ff;color:#6559d7}.calday.hasdata:after{content:"";position:absolute;bottom:3px;left:calc(50% - 2px);width:4px;height:4px;background:#8e83f4;border-radius:50%}.calday.selected.hasdata:after{background:white}.calday.empty{visibility:hidden}
+.entries{display:grid;gap:9px}.entry{display:flex;align-items:center;gap:9px;padding:9px;border-radius:13px;background:#fbfcff}.entry-art{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:#fff1df}.entry:nth-child(2) .entry-art{background:#eaf5ff}.entry:nth-child(3) .entry-art{background:#eaf8f2}.entry-info{min-width:0;flex:1}.entry-info b{font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry-info small{font-size:9px;color:#9ba4bf}.empty{font-size:11px;color:#9aa3bf;text-align:center;padding:18px 5px}
+.tasks{display:grid;gap:8px}.task{display:flex;align-items:flex-start;gap:9px;padding:8px 2px;border-bottom:1px solid #f1f2f8}.task input{accent-color:#7468ed;width:16px;height:16px;margin-top:3px}.task span{flex:1;font-size:10px;line-height:1.8}.task.done span{text-decoration:line-through;color:#aab0c3}.task button{background:transparent;color:#aab0c3;font-size:15px}.progress{height:7px;background:#eeeffa;border-radius:20px;overflow:hidden;margin:8px 0 13px}.progress div{height:100%;background:linear-gradient(90deg,#82d9e9,#7d8af8);border-radius:20px;width:0;transition:.2s}.add-row{display:flex;gap:6px;margin-top:10px}.add-row input{min-width:0;flex:1;border:1px solid #edf0f8;border-radius:10px;padding:9px;font-size:10px;outline:0}.add-row button,.save{background:#7568ed;color:white;border-radius:10px;padding:9px 12px;font-size:10px}.note-panel{margin-top:15px;display:grid;grid-template-columns:1fr 1.2fr;gap:15px}.note-art{border-radius:15px;overflow:hidden;min-height:130px}.note-art img{width:100%;height:100%;object-fit:cover}.daily-scene{position:relative;min-height:145px}.daily-scene img{position:absolute;inset:0}.scene-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,43,94,.08),rgba(28,43,94,.68))}.scene-words{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:16px 20px;color:white;text-shadow:0 1px 5px #1d2a5c55}.scene-words span{font-size:10px;margin-bottom:8px;color:#fff4c9}.scene-words b{font-size:15px;line-height:1.9;max-width:90%}.scene-words small{font-size:9px;margin-top:5px;color:#f3f4ff}.note-editor textarea{width:100%;height:85px;resize:vertical;border:1px solid #edf0f8;border-radius:12px;padding:10px;font:11px/2 Vazirmatn,Tahoma,sans-serif;outline:0}.note-editor textarea:focus,.add-row input:focus{border-color:#aaa2ff;box-shadow:0 0 0 3px #f1efff}.note-actions{display:flex;justify-content:space-between;align-items:center;margin-top:7px}.note-actions small{font-size:9px;color:#a0a8bf}.bottomline{text-align:center;color:#a4abc2;font-size:9px;margin-top:20px}
+.mobile-nav{display:none}.toast{position:fixed;bottom:22px;left:22px;background:#313e7b;color:white;padding:11px 16px;border-radius:12px;font-size:11px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
+@media(max-width:1120px){.dashboard{grid-template-columns:1fr 1fr}.calendar-panel{grid-column:1/-1}.quick-links{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.app{display:block}.sidebar{display:none}.main{padding:15px 13px 85px}.topbar{margin-bottom:13px}.search{width:42px;padding:10px;justify-content:center}.search input{display:none}.greeting{grid-template-columns:1fr;gap:10px}.greet-copy h2{font-size:22px}.visual-card{height:120px}.quick-links{grid-template-columns:repeat(2,1fr);gap:8px}.quick{min-height:70px;padding:11px}.quick .qicon{width:34px;height:34px}.dashboard{grid-template-columns:1fr}.calendar-panel{grid-column:auto}.calday{min-height:38px}.note-panel{grid-template-columns:1fr}.note-art{height:110px}.mobile-nav{display:flex;position:fixed;bottom:0;right:0;left:0;background:#fff;border-top:1px solid var(--line);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:4}.mobile-nav button{background:transparent;color:#929bb8;font-size:9px;display:grid;gap:3px;justify-items:center}.mobile-nav button span{font-size:18px}.mobile-nav button.active{color:#7164ed}}
+</style></head>
+<body><div class="app">
+<aside class="sidebar"><div class="brand"><div class="logo"><svg viewBox="0 0 64 64" fill="none"><path d="M32 49C17 39 18 22 32 10C46 22 47 39 32 49Z" fill="#fff"/><path d="M31 49C12 46 7 34 12 22C25 25 32 35 31 49Z" fill="#d9d5ff"/><path d="M33 49C52 46 57 34 52 22C39 25 32 35 33 49Z" fill="#b9c7ff"/><path d="m25 37 7 7 12-15" stroke="#6658dc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>روزنگار</h1><small>دفتر خاطرات و یادداشت‌های روزانه</small></div></div>
+<nav class="nav"><button class="active" data-scroll="home"><span class="ico">⌂</span>خانه</button><button data-scroll="calendarPanel"><span class="ico">▦</span>تقویم</button><button data-scroll="notePanel"><span class="ico">♧</span>یادداشت‌ها</button><button data-scroll="taskPanel"><span class="ico">☑</span>کارها</button><button id="archiveBtn"><span class="ico">▣</span>آرشیو روزها</button><button id="backupBtn"><span class="ico">⇩</span>پشتیبان‌گیری</button></nav>
+<div class="side-note">هر روز، فرصتی تازه برای<br>بهتر شدن است...<div class="heart">♥</div></div></aside>
+<main class="main" id="home">
+<header class="topbar"><label class="search">⌕ <input id="search" placeholder="جست‌وجوی یادداشت‌ها..."></label><div class="top-left"><button class="round-btn" id="backupTop" title="پشتیبان">⇩</button><div class="avatar">ر</div></div></header>
+<section class="greeting"><div class="greet-copy"><h2 id="hello">سلام! 🌿</h2><p>امروز چه خاطره‌ای می‌خواهی ثبت کنی؟</p><div class="date-card"><span class="date-icon">▦</span><span id="todayDate">امروز</span></div></div><div class="visual-card"><img src="assets/journal-vignette.png" alt="دفتر و فنجان قهوه"></div></section>
+<section class="quick-links"><button class="quick qblue" id="newNote"><span class="qicon">✧</span><span><b>یادداشت جدید</b><small>ثبت فکرها و احساسات</small></span></button><button class="quick qmint" id="focusTasks"><span class="qicon">☑</span><span><b>لیست کارها</b><small>برنامه‌ریزی امروز</small></span></button><button class="quick qpink" id="moodBtn"><span class="qicon">♡</span><span><b>حال خوب</b><small>ثبت حس و حال روز</small></span></button><button class="quick qlav" id="archiveQuick"><span class="qicon">▣</span><span><b>آرشیو</b><small>یادداشت‌های گذشته</small></span></button></section>
+<section class="dashboard">
+<div class="panel calendar-panel" id="calendarPanel"><div class="panel-head"><h3>تقویم روزهای من</h3><div class="monthbar"><button id="prev">‹</button><select id="month"></select><select id="year"></select><button id="next">›</button></div></div><div class="calendar" id="calendar"></div><div class="bottomline" id="chosenDate">یک روز را انتخاب کن</div></div>
+<div class="panel"><div class="panel-head"><h3>یادداشت‌های امروز</h3><small id="noteCount">۰ یادداشت</small></div><div class="entries" id="entries"><div class="empty">هنوز یادداشتی برای این روز نداری</div></div></div>
+<div class="panel" id="taskPanel"><div class="panel-head"><h3>کارهای امروز</h3><small id="taskSummary">۰ از ۰ انجام‌شده</small></div><div class="progress"><div id="progressFill"></div></div><div class="tasks" id="tasks"></div><form class="add-row" id="taskForm"><input id="taskInput" placeholder="کار تازه‌ای اضافه کن..." maxlength="120" required><button>＋</button></form></div>
 </section>
-
-<section class="panel" id="panel-notes">
-  <div class="card">
-    <div class="card-head"><div><h2>یادداشت‌های من</h2><p class="subtle">نکته‌ها، فکرها و جمله‌هایی که دوست داری نگه داری.</p></div><span aria-hidden="true">💭</span></div>
-    <form id="noteForm" class="note-compose">
-      <div class="field"><label for="noteTitle">عنوان (اختیاری)</label><input id="noteTitle" maxlength="80" placeholder="مثلاً: چیزی که امروز یاد گرفتم"></div>
-      <div class="field"><label for="noteText">یادداشت</label><textarea id="noteText" maxlength="3000" required placeholder="هر چیزی که می‌خواهی به خاطر بسپاری…"></textarea></div>
-      <button class="btn primary" type="submit">＋ ذخیره یادداشت</button>
-    </form>
-    <div class="notes-list" id="notesList"></div>
-  </div>
-</section>
-
-<section class="panel" id="panel-quote">
-  <div class="layout">
-    <div class="quote-card">
-      <div class="quote-label">یک مکث کوتاه برای خودت</div>
-      <div class="quote-text" id="quoteText">لازم نیست همه‌چیز را امروز حل کنی؛ کافی است قدم بعدی را برداری.</div>
-      <div class="quote-number" id="quoteNumber">DAYBOOK · 01 / 50</div>
-      <div class="quote-actions"><button class="btn" id="nextQuote">جمله بعدی ←</button><button class="btn" id="copyQuote">کپی جمله</button></div>
-    </div>
-    <div class="card">
-      <h2>یادآوری امروز</h2>
-      <p style="line-height:2;color:#6f667b">پیشرفت همیشه پرسر و صدا نیست. گاهی یعنی به خودت استراحت بدهی، مرزی سالم تعیین کنی یا کاری کوچک را به پایان برسانی.</p>
-      <div style="background:#fbf8f1;border-radius:15px;padding:15px;line-height:1.9;font-size:14px">🌱 <strong>پیشنهاد:</strong> جمله‌ای را انتخاب کن که امروز بیشتر به آن نیاز داری و اجازه بده همراهت باشد.</div>
-      <p class="quote-hint">جمله‌ها برای الهام گرفتن نوشته شده‌اند؛ لازم نیست هر روز عالی باشی تا در مسیر رشد بمانی.</p>
-    </div>
-  </div>
-</section>
-
-<section class="panel" id="panel-settings">
-  <div class="layout">
-    <div class="card">
-      <div class="card-head"><div><h2>تنظیمات روزنگار</h2><p class="subtle">شخصی‌سازی تجربه و نگهداری اطلاعات</p></div><span aria-hidden="true">⚙️</span></div>
-      <div class="setting-row"><div><strong>ذخیره‌سازی خودکار</strong><small>اطلاعات در همین مرورگر ذخیره می‌شوند.</small></div><span style="color:#4c9b76;font-weight:700">فعال ✓</span></div>
-      <div class="setting-row"><div><strong>خروجی گرفتن از اطلاعات</strong><small>یک نسخه پشتیبان از کارها و یادداشت‌ها بگیر.</small></div><button class="btn secondary" id="exportData">دریافت فایل</button></div>
-      <div class="setting-row"><div><strong>بازیابی نسخه پشتیبان</strong><small>فایل JSON قبلی روزنگار را وارد کن.</small></div><label class="btn secondary file-label">انتخاب فایل<input id="importData" type="file" accept=".json,application/json" hidden></label></div>
-      <div class="setting-row"><div><strong>پاک‌کردن همه اطلاعات</strong><small>این کار برگشت‌پذیر نیست؛ ابتدا نسخه پشتیبان بگیر.</small></div><button class="btn danger" id="clearData">پاک‌کردن</button></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div><h2>موسیقی ملایم</h2><p class="subtle">برای تمرکز یا لحظه‌ای آرامش</p></div><span aria-hidden="true">🎧</span></div>
-      <p style="font-size:14px;line-height:1.9;color:#70677c">می‌توانی آهنگ دلخواهت را از دستگاه انتخاب کنی. فایل موسیقی فقط در همین صفحه پخش می‌شود و به جایی ارسال نمی‌شود.</p>
-      <div class="music-controls">
-        <button class="btn primary" id="musicToggle">▶ پخش موسیقی</button>
-        <label class="btn secondary file-label">＋ انتخاب آهنگ<input id="musicFile" type="file" accept="audio/*" hidden></label>
-      </div>
-      <div class="status" id="musicStatus">آهنگی انتخاب نشده است. برای صدای محیطی، دکمه پخش را بزن.</div>
-      <audio id="audioPlayer" controls style="width:100%;margin-top:14px;display:none"></audio>
-      <p class="subtle" style="margin-top:17px">نکته: صدای محیطی داخلی با نوسان‌های نرم ساخته می‌شود؛ برای موسیقی واقعی، فایل خودت را انتخاب کن.</p>
-    </div>
-  </div>
-</section>
-</main>
-<footer>روزنگار · فضایی کوچک برای روزهای بهتر تو <span style="font-family:Poppins,sans-serif">♡</span></footer>
-</div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<section class="panel note-panel" id="notePanel"><div class="note-art daily-scene" id="dailyScene"><img id="dailyImage" src="assets/daily-1.jpg" alt="تصویر الهام‌بخش امروز"><div class="scene-shade"></div><div class="scene-words"><span>✦ حال خوب امروز</span><b id="dailyQuote">هر روز، فرصتی تازه برای شکوفا شدن است.</b><small id="dailyQuoteSub">یک قدم کوچک هم ارزشمند است.</small></div></div><div class="note-editor"><div class="panel-head"><h3>یادداشت خصوصی این روز</h3><small>صفحه‌ی اختصاصی تاریخ انتخاب‌شده</small></div><textarea id="noteText" placeholder="اتفاق‌ها، فکرها و لحظه‌هایی که دوست داری بمانند..."></textarea><div class="note-actions"><small>ذخیره‌ی خودکار روی همین دستگاه</small><button class="save" id="saveNote">ذخیره یادداشت</button></div></div></section>
+<div class="bottomline">روزنگار · برای لحظه‌هایی که ارزش به خاطر سپردن دارند</div>
+</main></div>
+<nav class="mobile-nav"><button class="active" data-scroll="home"><span>⌂</span>خانه</button><button data-scroll="calendarPanel"><span>▦</span>تقویم</button><button data-scroll="taskPanel"><span>☑</span>کارها</button><button data-scroll="notePanel"><span>♧</span>یادداشت</button></nav>
+<div class="toast" id="toast"></div><input type="file" id="importFile" accept="application/json" hidden>
 <script>
-(() => {
-  "use strict";
-  const STORAGE_KEY = "daybook-fa-v1";
-  const $ = (id) => document.getElementById(id);
-  const faNum = (value) => String(value).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
-  const quotes = [
-    "لازم نیست همه‌چیز را امروز حل کنی؛ کافی است قدم بعدی را برداری.",
-    "استراحت‌کردن هم بخشی از مسیر رسیدن است، نه نقطه مقابل آن.",
-    "قرار نیست با سرعت دیگران زندگی کنی؛ ریتم خودت را پیدا کن.",
-    "هر بار که دوباره شروع می‌کنی، چیزی درباره خودت یاد گرفته‌ای.",
-    "مرزهای سالم، دیوار نیستند؛ راهی برای مراقبت از رابطه‌ها هستند.",
-    "پیشرفت آرام هم پیشرفت است؛ به مسیرت فرصت بده.",
-    "تو می‌توانی هم‌زمان در حال یادگیری باشی و به خودت افتخار کنی.",
-    "همه پاسخ‌ها لازم نیست همین امروز پیدا شوند.",
-    "به انرژی‌ات مثل یک منبع ارزشمند نگاه کن؛ آگاهانه خرجش کن.",
-    "یک تصمیم کوچک و خوب، از یک برنامه بی‌نقصِ اجرا‌نشده بهتر است.",
-    "نه گفتن به چیزی، گاهی بله گفتن به آرامش خودت است.",
-    "روزهای معمولی هم می‌توانند پر از لحظه‌های ارزشمند باشند.",
-    "خودت را با نسخه دیروزت بسنج، نه با پشت‌صحنه زندگی دیگران.",
-    "لازم نیست انگیزه داشته باشی؛ گاهی فقط با پنج دقیقه شروع کن.",
-    "اشتباه‌ها حکم نهایی نیستند؛ بخشی از فرایند یادگیری‌اند.",
-    "به خودت همان‌قدر مهلت بده که به آدم‌های موردعلاقه‌ات می‌دهی.",
-    "آرامش همیشه از کم‌شدن کارها نمی‌آید؛ گاهی از روشن‌شدن اولویت‌ها می‌آید.",
-    "هر چیزی که فوریت دارد، الزاماً مهم‌ترین چیز نیست.",
-    "زندگی بهتر از قدم‌های کوچک و تکرارشونده ساخته می‌شود.",
-    "اجازه بده بعضی کارها فقط به اندازه کافی خوب باشند.",
-    "مراقبت از خود، مسئولیت‌پذیری است؛ خودخواهی نیست.",
-    "گاهی شجاعت یعنی گفت‌وگویی سخت را با مهربانی شروع کنی.",
-    "تو مجبور نیستی برای ارزشمند بودن، همیشه مفید باشی.",
-    "پایان یک روز سخت، به معنی شکست تو نیست.",
-    "وقتی ذهنت شلوغ است، قدم بعدی را کوچک‌تر کن.",
-    "برای رشدکردن، لازم نیست از خود فعلی‌ات بدت بیاید.",
-    "هر روز فرصت کوچکی است برای نزدیک‌ترشدن به آنچه برایت مهم است.",
-    "آرام‌تر رفتن هم می‌تواند انتخابی قدرتمندانه باشد.",
-    "به قول‌هایی که به خودت می‌دهی، با مهربانی وفادار بمان.",
-    "به جای کامل‌بودن، روی حاضر بودن و ادامه دادن تمرکز کن.",
-    "گاهی بهترین بهره‌وری این است که بدانی چه کاری را انجام ندهی.",
-    "احساساتت اطلاعات‌اند؛ لازم نیست همیشه فرمان نهایی باشند.",
-    "از خودت نپرس چرا هنوز نرسیده‌ای؛ ببین چه چیزی را پشت سر گذاشته‌ای.",
-    "با خودت صادق باش، اما با خودت بی‌رحم نباش.",
-    "قرار نیست همه روزها پربازده باشند تا زندگی‌ات ارزشمند باشد.",
-    "چیزی را که می‌توانی کنترل کنی انجام بده و باقی را سبک‌تر حمل کن.",
-    "تغییر پایدار اغلب بی‌سروصدا اتفاق می‌افتد.",
-    "به آدمی تبدیل شو که می‌توانی به او اعتماد کنی؛ با عمل‌های کوچک.",
-    "یک مکث آگاهانه می‌تواند مسیر یک روز را عوض کند.",
-    "از شروع‌های کوچک خجالت نکش؛ هر مسیر بزرگی از جایی آغاز شده است.",
-    "به جای سرزنش خود، از تجربه‌ات یک راهنمای تازه بساز.",
-    "وقت‌گذاشتن برای آدم‌های مهم، بخشی از یک زندگی متعادل است.",
-    "قرار نیست برای همه قابل‌فهم یا موردتأیید باشی.",
-    "گاهی انتخاب درست، انتخابی است که آرامش بلندمدتت را حفظ می‌کند.",
-    "به آنچه امروز از دستت برمی‌آید احترام بگذار.",
-    "با خودت رقابت نکن؛ با خودت همکاری کن.",
-    "یک روز بد، یک زندگی بد نمی‌سازد.",
-    "وقتی لازم است کمک بخواهی، این هم نشانه بلوغ و قدرت است.",
-    "برای چیزهای مهم جا باز کن؛ حتی اگر با کم‌کردن چیزهای دیگر باشد.",
-    "امروز لازم نیست نسخه نهایی خودت باشی؛ فقط نسخه‌ای حاضر و رو به رشد باش."
-  ];
-
-  const todayISO = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  };
-  const jalaliDate = (date = new Date(), withWeekday = true) => {
-    try {
-      return new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
-        weekday: withWeekday ? "long" : undefined, day:"numeric", month:"long", year:"numeric"
-      }).format(date);
-    } catch (_) { return new Intl.DateTimeFormat("fa-IR").format(date); }
-  };
-  const prettyTaskDate = (iso) => {
-    if (!iso) return "";
-    const d = new Date(iso + "T12:00:00");
-    return Number.isNaN(d.getTime()) ? iso : jalaliDate(d, false);
-  };
-  let state = { tasks: [], notes: [], quoteIndex: 0 };
-  let audioUrl = null, audioContext = null, masterGain = null, oscillators = [], ambientPlaying = false, selectedAudio = false;
-
-  function load() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (saved && typeof saved === "object") {
-        state.tasks = Array.isArray(saved.tasks) ? saved.tasks : [];
-        state.notes = Array.isArray(saved.notes) ? saved.notes : [];
-        state.quoteIndex = Number.isInteger(saved.quoteIndex) ? Math.abs(saved.quoteIndex) % quotes.length : 0;
-      }
-    } catch (e) { console.warn("خواندن اطلاعات ذخیره‌شده ممکن نشد.", e); }
-  }
-  function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch (_) { toast("ذخیره‌سازی ممکن نشد؛ فضای مرورگر را بررسی کن."); }
-  }
-  let toastTimer;
-  function toast(message) {
-    $("toast").textContent = message;
-    $("toast").classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2400);
-  }
-  function escapeHTML(text) {
-    return String(text).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  }
-
-  function renderTasks() {
-    const list = $("taskList");
-    const today = todayISO();
-    const todays = state.tasks.filter(t => t.date === today);
-    const done = todays.filter(t => t.done).length;
-    const percent = todays.length ? Math.round(done / todays.length * 100) : 0;
-    $("progressBar").style.width = percent + "%";
-    $("progressText").textContent = faNum(percent) + "٪";
-    $("dayCount").textContent = `${faNum(done)} از ${faNum(todays.length)} کار امروز`;
-    $("listSubtitle").textContent = `${faNum(state.tasks.length)} کار ثبت‌شده`;
-    const sorted = [...state.tasks].sort((a,b) => (a.date || "").localeCompare(b.date || "") || (a.time || "99:99").localeCompare(b.time || "99:99"));
-    if (!sorted.length) {
-      list.innerHTML = '<div class="empty"><span class="emoji">🌿</span>هنوز کاری ثبت نکرده‌ای.<br>با یک قدم کوچک شروع کن.</div>';
-      return;
-    }
-    list.innerHTML = sorted.map(task => `
-      <div class="task ${task.done ? "done" : ""}" data-id="${escapeHTML(task.id)}">
-        <input class="task-check" type="checkbox" aria-label="انجام شد" ${task.done ? "checked" : ""}>
-        <div class="task-main"><div class="task-title">${escapeHTML(task.title)}</div>
-        <div class="task-meta"><span>📅 ${escapeHTML(prettyTaskDate(task.date))}</span>${task.time ? `<span>◷ ${escapeHTML(task.time)}</span>` : ""}</div></div>
-        <button class="icon-btn delete-task" aria-label="حذف کار" title="حذف کار">×</button>
-      </div>`).join("");
-  }
-  function renderNotes() {
-    const list = $("notesList");
-    if (!state.notes.length) {
-      list.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="emoji">📔</span>یادداشت‌هایت اینجا نگهداری می‌شوند.</div>';
-      return;
-    }
-    list.innerHTML = [...state.notes].sort((a,b) => b.createdAt - a.createdAt).map(note => `
-      <article class="note" data-id="${escapeHTML(note.id)}">
-        <div class="note-top"><strong>${escapeHTML(note.title || "یادداشت بدون عنوان")}</strong><button class="icon-btn delete-note" aria-label="حذف یادداشت" title="حذف یادداشت">×</button></div>
-        <p>${escapeHTML(note.text)}</p><time>${escapeHTML(new Date(note.createdAt).toLocaleString("fa-IR"))}</time>
-      </article>`).join("");
-  }
-  function renderQuote() {
-    $("quoteText").textContent = quotes[state.quoteIndex];
-    $("quoteNumber").textContent = `DAYBOOK · ${String(state.quoteIndex + 1).padStart(2,"0")} / 50`;
-  }
-  function renderAll() { renderTasks(); renderNotes(); renderQuote(); }
-  $("todayDate").textContent = jalaliDate(new Date());
-  $("taskDate").value = todayISO();
-
-  // جابه‌جایی میان تب‌ها
-  document.querySelectorAll(".tab").forEach(button => button.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(b => { b.classList.toggle("active", b === button); b.setAttribute("aria-selected", String(b === button)); });
-    document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === "panel-" + button.dataset.tab));
-  }));
-
-  $("taskForm").addEventListener("submit", event => {
-    event.preventDefault();
-    const title = $("taskTitle").value.trim();
-    if (!title) return;
-    state.tasks.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(), title, time:$("taskTime").value, date:$("taskDate").value || todayISO(), done:false });
-    save(); renderTasks(); $("taskTitle").value = ""; $("taskTime").value = "";
-    toast("کار جدید ذخیره شد 🌱");
-  });
-  $("taskList").addEventListener("change", event => {
-    if (!event.target.matches(".task-check")) return;
-    const id = event.target.closest(".task").dataset.id;
-    const task = state.tasks.find(t => t.id === id);
-    if (task) { task.done = event.target.checked; save(); renderTasks(); }
-  });
-  $("taskList").addEventListener("click", event => {
-    const button = event.target.closest(".delete-task");
-    if (!button) return;
-    const id = button.closest(".task").dataset.id;
-    state.tasks = state.tasks.filter(t => t.id !== id);
-    save(); renderTasks(); toast("کار حذف شد.");
-  });
-  $("noteForm").addEventListener("submit", event => {
-    event.preventDefault();
-    const text = $("noteText").value.trim();
-    if (!text) return;
-    state.notes.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(), title:$("noteTitle").value.trim(), text, createdAt:Date.now() });
-    save(); renderNotes(); $("noteTitle").value = ""; $("noteText").value = "";
-    toast("یادداشتت ذخیره شد ✨");
-  });
-  $("notesList").addEventListener("click", event => {
-    const button = event.target.closest(".delete-note");
-    if (!button) return;
-    const id = button.closest(".note").dataset.id;
-    state.notes = state.notes.filter(n => n.id !== id);
-    save(); renderNotes(); toast("یادداشت حذف شد.");
-  });
-  $("nextQuote").addEventListener("click", () => { state.quoteIndex = (state.quoteIndex + 1) % quotes.length; save(); renderQuote(); });
-  $("copyQuote").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(quotes[state.quoteIndex]); toast("جمله کپی شد."); }
-    catch (_) { toast("کپی خودکار در این مرورگر در دسترس نیست."); }
-  });
-
-  // پشتیبان‌گیری و بازیابی اطلاعات به صورت فایل JSON
-  $("exportData").addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify({ version:1, exportedAt:new Date().toISOString(), ...state }, null, 2)], {type:"application/json;charset=utf-8"});
-    const url = URL.createObjectURL(blob), a = document.createElement("a");
-    a.href = url; a.download = "daybook-backup.json"; a.click(); URL.revokeObjectURL(url);
-    toast("فایل پشتیبان آماده شد.");
-  });
-  $("importData").addEventListener("change", async event => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-    try {
-      const imported = JSON.parse(await file.text());
-      if (!imported || !Array.isArray(imported.tasks) || !Array.isArray(imported.notes)) throw new Error("invalid");
-      if (!confirm("اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟")) { event.target.value = ""; return; }
-      state.tasks = imported.tasks.filter(t => t && typeof t.title === "string" && typeof t.date === "string").map(t => ({id:String(t.id || Date.now()+Math.random()),title:t.title,time:String(t.time||""),date:t.date,done:!!t.done}));
-      state.notes = imported.notes.filter(n => n && typeof n.text === "string").map(n => ({id:String(n.id || Date.now()+Math.random()),title:String(n.title||""),text:n.text,createdAt:Number(n.createdAt)||Date.now()}));
-      state.quoteIndex = Number.isInteger(imported.quoteIndex) ? Math.abs(imported.quoteIndex) % quotes.length : 0;
-      save(); renderAll(); toast("نسخه پشتیبان بازیابی شد.");
-    } catch (_) { toast("فایل انتخاب‌شده معتبر نیست."); }
-    event.target.value = "";
-  });
-  $("clearData").addEventListener("click", () => {
-    if (!confirm("همه کارها و یادداشت‌ها پاک شوند؟ این کار قابل بازگشت نیست.")) return;
-    state = {tasks:[],notes:[],quoteIndex:0}; save(); renderAll(); toast("اطلاعات روزنگار پاک شد.");
-  });
-
-  // موسیقی: پخش فایل انتخابی یا ساخت صدای محیطی ساده با Web Audio
-  function stopAmbient() {
-    oscillators.forEach(osc => { try { osc.stop(); } catch (_) {} });
-    oscillators = [];
-    if (masterGain && audioContext) { try { masterGain.gain.setTargetAtTime(0, audioContext.currentTime, .15); } catch (_) {} }
-    ambientPlaying = false;
-    $("musicToggle").textContent = "▶ پخش موسیقی";
-  }
-  async function startAmbient() {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) { toast("پخش صدای محیطی در این مرورگر پشتیبانی نمی‌شود."); return; }
-    try {
-      if (!audioContext) {
-        audioContext = new AudioCtx();
-        masterGain = audioContext.createGain(); masterGain.gain.value = 0.018; masterGain.connect(audioContext.destination);
-        [174.61, 220, 261.63].forEach((freq, i) => {
-          const osc = audioContext.createOscillator(), gain = audioContext.createGain();
-          osc.type = i === 1 ? "sine" : "triangle"; osc.frequency.value = freq;
-          gain.gain.value = i === 1 ? .22 : .12;
-          osc.connect(gain); gain.connect(masterGain); osc.start(); oscillators.push(osc);
-        });
-      }
-      await audioContext.resume();
-      masterGain.gain.setTargetAtTime(.018, audioContext.currentTime, .4);
-      ambientPlaying = true; $("musicToggle").textContent = "Ⅱ قطع صدا";
-      $("musicStatus").textContent = "صدای محیطی ملایم در حال پخش است.";
-    } catch (_) { toast("پخش صدا ممکن نشد."); }
-  }
-  $("musicToggle").addEventListener("click", async () => {
-    if (selectedAudio) {
-      const audio = $("audioPlayer");
-      if (audio.paused) { try { await audio.play(); $("musicToggle").textContent = "Ⅱ قطع موسیقی"; } catch (_) { toast("پخش فایل ممکن نشد."); } }
-      else { audio.pause(); $("musicToggle").textContent = "▶ پخش موسیقی"; }
-      return;
-    }
-    if (ambientPlaying) { stopAmbient(); $("musicStatus").textContent = "صدای محیطی متوقف شد."; }
-    else await startAmbient();
-  });
-  $("musicFile").addEventListener("change", event => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-    if (audioUrl) URL.revokeObjectURL(audioUrl);
-    stopAmbient(); audioUrl = URL.createObjectURL(file); selectedAudio = true;
-    const audio = $("audioPlayer"); audio.src = audioUrl; audio.style.display = "block"; audio.load();
-    $("musicStatus").textContent = "آهنگ انتخاب‌شده: " + file.name;
-    $("musicToggle").textContent = "▶ پخش موسیقی";
-    audio.play().then(() => { $("musicToggle").textContent = "Ⅱ قطع موسیقی"; }).catch(() => toast("برای شروع پخش، دکمه پخش را بزن."));
-  });
-  $("audioPlayer").addEventListener("ended", () => { $("musicToggle").textContent = "▶ پخش موسیقی"; });
-  $("audioPlayer").addEventListener("pause", () => { if (selectedAudio) $("musicToggle").textContent = "▶ پخش موسیقی"; });
-  $("audioPlayer").addEventListener("play", () => { if (selectedAudio) $("musicToggle").textContent = "Ⅱ قطع موسیقی"; });
-
-  load(); renderAll();
-})();
-</script>
-
-<script>
-/* ثبت Service Worker برای پوسته آفلاین؛ نیازمند HTTPS یا localhost است. */
-if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("ثبت حالت آفلاین ممکن نشد:", err));
-  });
-}
-</script>
-\n</body>
-</html>
+const $=id=>document.getElementById(id),months=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],wd=['ش','ی','د','س','چ','پ','ج'];
+const fa=n=>new Intl.NumberFormat('fa-IR').format(n);
+function jalaliNow(){let p=new Intl.DateTimeFormat('en-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date()),o={};p.forEach(x=>o[x.type]=+x.value);return {y:o.year,m:o.month,d:o.day}}
+function j2g(jy,jm,jd){jy+=1595;let days=-355668+365*jy+Math.floor(jy/33)*8+Math.floor((jy%33+3)/4)+jd+(jm<7?(jm-1)*31:(jm-7)*30+186);let gy=400*Math.floor(days/146097);days%=146097;if(days>36524){gy+=100*Math.floor(--days/36524);days%=36524;if(days>=365)days++}gy+=4*Math.floor(days/1461);days%=1461;if(days>365){gy+=Math.floor((days-1)/365);days=(days-1)%365}let gd=days+1,a=[0,31,(gy%4===0&&gy%100!==0)||gy%400===0?29:28,31,30,31,30,31,31,30,31,30,31],gm=1;while(gm<=12&&gd>a[gm]){gd-=a[gm];gm++}return {gy,gm,gd}}
+const today=jalaliNow();let vy=today.y,vm=today.m,selected=key(today.y,today.m,today.d),db=JSON.parse(localStorage.getItem('rooznegar-luxe')||'{}');
+function key(y,m,d){return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+function parts(k){return k.split('-').map(Number)}
+function dim(y,m){return m<=6?31:m<=11?30:(y%4===3?30:29)}
+function page(){return db[selected]||(db[selected]={tasks:[],note:'',mood:''})}
+function save(){localStorage.setItem('rooznegar-luxe',JSON.stringify(db))}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function dateLabel(y,m,d){return `${fa(d)} ${months[m-1]} ${fa(y)}`}
+function renderCalendar(){$('month').innerHTML=months.map((m,i)=>`<option value="${i+1}" ${vm===i+1?'selected':''}>${m}</option>`).join('');$('year').innerHTML=Array.from({length:9},(_,i)=>vy-4+i).map(y=>`<option value="${y}" ${vy===y?'selected':''}>${fa(y)}</option>`).join('');let g=j2g(vy,vm,1),offset=(new Date(g.gy,g.gm-1,g.gd).getDay()+1)%7,html=wd.map(x=>`<div class="weekday">${x}</div>`).join('');for(let i=0;i<offset;i++)html+='<div class="calday empty"></div>';for(let d=1;d<=dim(vy,vm);d++){let k=key(vy,vm,d),p=db[k],has=p&&(p.note||p.tasks?.length);html+=`<button class="calday ${selected===k?'selected':''} ${k===key(today.y,today.m,today.d)?'today':''} ${has?'hasdata':''}" data-d="${d}">${fa(d)}</button>`}$('calendar').innerHTML=html;$('calendar').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>select(vy,vm,+b.dataset.d))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderDay(){let [y,m,d]=parts(selected),p=page();$('chosenDate').textContent=dateLabel(y,m,d)+' · صفحه‌ی شخصی تو';$('todayDate').textContent=dateLabel(y,m,d);$('noteText').value=p.note||'';$('entries').innerHTML=p.note?`<div class="entry"><div class="entry-art">✎</div><div class="entry-info"><b>${esc(p.note.slice(0,45))}</b><small>یادداشت روز · ${dateLabel(y,m,d)}</small></div></div>`:'<div class="empty">هنوز یادداشتی برای این روز نداری ✨</div>';$('noteCount').textContent=fa(p.note?1:0)+' یادداشت';$('tasks').innerHTML=p.tasks.length?p.tasks.map(t=>`<label class="task ${t.done?'done':''}"><input type="checkbox" data-id="${t.id}" ${t.done?'checked':''}><span>${esc(t.text)}</span><button type="button" data-del="${t.id}">×</button></label>`).join(''):'<div class="empty">کارهای این روز را اینجا اضافه کن 🌱</div>';let done=p.tasks.filter(t=>t.done).length;$('taskSummary').textContent=`${fa(done)} از ${fa(p.tasks.length)} انجام‌شده`;$('progressFill').style.width=(p.tasks.length?done/p.tasks.length*100:0)+'%';$('tasks').querySelectorAll('[data-id]').forEach(c=>c.onchange=()=>{let t=p.tasks.find(x=>x.id===c.dataset.id);t.done=c.checked;save();renderDay();renderCalendar()});$('tasks').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{p.tasks=p.tasks.filter(t=>t.id!==b.dataset.del);save();renderDay();renderCalendar()})}
+function select(y,m,d){selected=key(y,m,d);vy=y;vm=m;renderCalendar();renderDay();renderDailyInspiration()}
+$('month').onchange=()=>{vm=+$('month').value;renderCalendar()};$('year').onchange=()=>{vy=+$('year').value;renderCalendar()};$('prev').onclick=()=>{if(--vm<1){vm=12;vy--}renderCalendar()};$('next').onclick=()=>{if(++vm>12){vm=1;vy++}renderCalendar()};
+$('taskForm').onsubmit=e=>{e.preventDefault();let v=$('taskInput').value.trim();if(!v)return;page().tasks.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),text:v,done:false});$('taskInput').value='';save();renderDay();renderCalendar();toast('به کارهای همین روز اضافه شد')};
+$('saveNote').onclick=()=>{page().note=$('noteText').value;save();renderDay();renderCalendar();toast('یادداشت ذخیره شد')};$('noteText').onblur=()=>{page().note=$('noteText').value;save();renderCalendar()};
+function exportData(){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.href=u;a.download='rooznegar-backup.json';a.click();URL.revokeObjectURL(u);toast('نسخه پشتیبان آماده شد')}
+$('backupBtn').onclick=exportData;$('backupTop').onclick=exportData;$('importFile').onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!d||Array.isArray(d))throw 0;if(confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟')){db=d;save();renderCalendar();renderDay();toast('اطلاعات بازیابی شد')}}catch{toast('فایل پشتیبان معتبر نیست')}e.target.value=''};
+$('archiveBtn').onclick=$('archiveQuick').onclick=()=>{let keys=Object.keys(db).filter(k=>db[k].note||db[k].tasks?.length).sort().reverse();if(!keys.length){toast('هنوز روزی در آرشیو ثبت نشده');return}let k=prompt('تاریخ موردنظر را انتخاب کن:\n'+keys.map((x,i)=>`${i+1}. ${dateLabel(...parts(x))}`).join('\n')+'\nشماره را وارد کن:');let n=Number(k)-1;if(Number.isInteger(n)&&keys[n])select(...parts(keys[n]))};
+$('newNote').onclick=()=>{$('noteText').focus();$('notePanel').scrollIntoView({behavior:'smooth'})};$('focusTasks').onclick=()=>{$('taskInput').focus();$('taskPanel').scrollIntoView({behavior:'smooth'})};$('moodBtn').onclick=()=>{let moods=['😊 خوشحال','😌 آرام','🤔 در فکر','😔 خسته','🥰 قدردان'];let p=page(),v=prompt('امروز چه حسی داری؟\n'+moods.map((x,i)=>`${i+1}. ${x}`).join('\n'));if(v&&moods[Number(v)-1]){p.mood=moods[Number(v)-1];save();toast('حال و هوای امروز ثبت شد: '+p.mood)}};
+$('search').onkeydown=e=>{if(e.key==='Enter'){let q=e.target.value.trim();let found=Object.keys(db).find(k=>(db[k].note||'').includes(q)||db[k].tasks?.some(t=>t.text.includes(q)));if(found)select(...parts(found));else toast('موردی پیدا نشد')}};
+document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>{document.getElementById(b.dataset.scroll).scrollIntoView({behavior:'smooth'});document.querySelectorAll('[data-scroll]').forEach(x=>x.classList.toggle('active',x===b))});
+renderCalendar();renderDay();renderDailyInspiration();
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+</script></body></html>
