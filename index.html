@@ -62,7 +62,7 @@ function uuid(){return crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx
 function nowIso(){return new Date().toISOString()}
 function validIso(v){return v&&Number.isFinite(Date.parse(v))?new Date(v).toISOString():null}
 function isUuid(v){return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(v||''))}
-function ensureEntry(k){if(!db[k]||typeof db[k]!=='object')db[k]={tasks:[],note:'',mood:''};const e=db[k];if(!Array.isArray(e.tasks))e.tasks=[];if(typeof e.note!=='string')e.note='';if(!e.noteUpdatedAt)e.noteUpdatedAt='1970-01-01T00:00:00.000Z';e.tasks.forEach(t=>{if(!t.id||!isUuid(t.id))t.id=uuid();if(!t.updatedAt)t.updatedAt='1970-01-01T00:00:00.000Z'});return e}
+function ensureEntry(k,markLegacy=true){if(!db[k]||typeof db[k]!=='object')db[k]={tasks:[],note:'',mood:''};const e=db[k];if(!Array.isArray(e.tasks))e.tasks=[];if(typeof e.note!=='string')e.note='';const legacyTime=markLegacy?nowIso():'1970-01-01T00:00:00.000Z';if(!e.noteUpdatedAt)e.noteUpdatedAt=legacyTime;e.tasks.forEach(t=>{if(!t.id||!isUuid(t.id))t.id=uuid();if(!t.updatedAt)t.updatedAt=legacyTime});return e}
 function page(){return ensureEntry(selected)}
 function persistLocal(){try{localStorage.setItem(DB_KEY,JSON.stringify(db));localStorage.setItem(TOMBSTONE_KEY,JSON.stringify(tombstones))}catch(e){toast('فضای ذخیره‌سازی دستگاه کافی نیست.')}}
 function save(){persistLocal();scheduleCloudSync()}
@@ -111,8 +111,8 @@ async function cloudSync(){if(!cloudClient||!cloudUser||!navigator.onLine)return
     cloudClient.from('day_entries').select('entry_date,note,updated_at').eq('user_id',cloudUser.id),
     cloudClient.from('day_tasks').select('id,entry_date,title,completed,updated_at,deleted_at').eq('user_id',cloudUser.id)
   ]);if(nr.error)throw nr.error;if(tr.error)throw tr.error;
-  for(const row of nr.data||[]){const k=jalaliKeyFromGregorian(row.entry_date),e=ensureEntry(k),remoteTime=validIso(row.updated_at)||'1970-01-01T00:00:00.000Z';if(isNewer(remoteTime,e.noteUpdatedAt)){e.note=row.note||'';e.noteUpdatedAt=remoteTime}}
-  for(const row of tr.data||[]){if(!row.id||!isUuid(row.id))continue;const k=jalaliKeyFromGregorian(row.entry_date),e=ensureEntry(k),localIndex=e.tasks.findIndex(t=>t.id===row.id),local=e.tasks[localIndex],remoteTime=validIso(row.updated_at)||'1970-01-01T00:00:00.000Z';
+  for(const row of nr.data||[]){const k=jalaliKeyFromGregorian(row.entry_date),e=ensureEntry(k,false),remoteTime=validIso(row.updated_at)||'1970-01-01T00:00:00.000Z';if(isNewer(remoteTime,e.noteUpdatedAt)){e.note=row.note||'';e.noteUpdatedAt=remoteTime}}
+  for(const row of tr.data||[]){if(!row.id||!isUuid(row.id))continue;const k=jalaliKeyFromGregorian(row.entry_date),e=ensureEntry(k,false),localIndex=e.tasks.findIndex(t=>t.id===row.id),local=e.tasks[localIndex],remoteTime=validIso(row.updated_at)||'1970-01-01T00:00:00.000Z';
     if(row.deleted_at){const deletedTime=validIso(row.deleted_at)||remoteTime,old=tombstones[row.id];if(!old||isNewer(deletedTime,old.deletedAt||old.updatedAt))tombstones[row.id]={id:row.id,date:k,title:row.title||'',updatedAt:remoteTime,deletedAt:deletedTime};if(local&& !isNewer(local.updatedAt,deletedTime))e.tasks.splice(localIndex,1);continue}
     const localTomb=tombstones[row.id];if(localTomb&& !isNewer(remoteTime,localTomb.deletedAt||localTomb.updatedAt))continue;
     if(!local)e.tasks.push({id:row.id,text:row.title||'',done:!!row.completed,updatedAt:remoteTime});
