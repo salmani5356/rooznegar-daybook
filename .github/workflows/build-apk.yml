@@ -19,16 +19,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Sync Capacitor
-        run: npx cap sync android
+      - name: Copy website files into Android
+        run: |
+          mkdir -p android/app/src/main/assets/public/assets
+          cp index.html android/app/src/main/assets/public/index.html
+          cp -r assets/. android/app/src/main/assets/public/assets/
 
       - name: Build APK
         run: |
