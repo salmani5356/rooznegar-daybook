@@ -1,10 +1,45 @@
-      - name: Generate Gradle Wrapper
+name: Build Rooznegar APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Prepare website assets
         run: |
-          cd android
-          gradle wrapper
+          mkdir -p android/app/src/main/assets/public/assets
+          cp index.html android/app/src/main/assets/public/index.html
+          cp -r assets/. android/app/src/main/assets/public/assets/
+
+      - name: Install Gradle 8.9
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
+          unzip -q gradle-8.9-bin.zip
+          echo "$PWD/gradle-8.9/bin" >> "$GITHUB_PATH"
 
       - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        run: gradle -p android assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rooznegar-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
