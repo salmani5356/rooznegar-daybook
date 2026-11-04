@@ -29,8 +29,11 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Create package and install Capacitor
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/android
+          npm install --save-dev @capacitor/cli
 
       - name: Prepare web files
         run: |
