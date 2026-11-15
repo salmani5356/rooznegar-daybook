@@ -1,9 +1,14 @@
 name: Build Android APK
 
+# APK فقط آدرس منتشرشده‌ی سایت را در یک WebView باز می‌کند،
+# پس فقط وقتی پوشه‌ی android یا همین فایل عوض شد نیاز به ساخت دوباره هست.
 on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/build-apk.yml'
 
 jobs:
   build:
@@ -19,30 +24,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Install Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
-
-      - name: Create package and install Capacitor
-        run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/android
-          npm install --save-dev @capacitor/cli
-
-      - name: Prepare web files
-        run: |
-          mkdir -p www
-          cp index.html www/index.html
-          cp -r assets www/assets
-
-      - name: Sync Capacitor
-        run: npx cap sync android
 
       - name: Build APK
         run: gradle -p android assembleDebug
