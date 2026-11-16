@@ -22,3 +22,6 @@
 - پروژه‌ی اندروید فقط آدرس `https://salmani5356.github.io/rooznegar-daybook/` را باز می‌کند؛ پس با تغییر وب نیازی به ساخت دوباره‌ی APK نیست.
 - ورود با **ایمیل و رمز عبور** است (بدون نیاز به باز کردن لینک؛ داخل APK هم کار می‌کند). در Supabase → Authentication → Sign In / Providers → Email می‌توانی **Confirm email** را خاموش کنی تا ساخت حساب بدون ایمیل تأیید انجام شود. حساب‌های قدیمی که با لینک ساخته شده‌اند، یک بار از داخل برنامه (کارت حساب ابری) رمز تعیین می‌کنند.
 - در Supabase باید RLS فعال و Redirect URL آدرس GitHub Pages مجاز باشد. کلید `service_role` را هرگز در فایل‌ها نگذار.
+
+## پشتیبانی
+ایمیل: rooz.studio.app@gmail.com · تلگرام: @RoozStudio_Support
